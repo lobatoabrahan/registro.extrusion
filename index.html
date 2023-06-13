@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tabla de datos y formulario</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <div id="formulario">
+    <h2>Registro de datos</h2>
+    <form id="miFormulario">
+      <label for="fecha">Fecha:</label>
+      <input type="date" id="fecha" name="fecha"><br>
+
+      <label for="turno">Turno:</label>
+      <input list="turnos" id="turno" name="turno">
+      <datalist id="turnos">
+        <option value="Diurno">
+        <option value="Nocturno">
+      </datalist><br>
+
+      <label for="operador">Operador:</label>
+      <input list="operadores" id="operador" name="operador">
+      <datalist id="operadores">
+        <option value="Jean Carlos Diaz">
+        <option value="Rafael Pinto">
+        <option value="Sergio Calvete">
+        <option value="Peter Quintero">
+      </datalist><br>
+
+      <label for="producto">Producto:</label>
+      <input type="text" id="producto" name="producto"><br>
+
+      <label for="maquina">Máquina:</label>
+      <input list="maquinas" id="maquina" name="maquina">
+      <datalist id="maquinas">
+        <option value="1">
+        <option value="2">
+        <option value="3">
+      </datalist><br>
+
+      <label for="bobina">Bobina:</label>
+      <input type="text" id="bobina" name="bobina"><br>
+
+      <label for="hora">Hora:</label>
+      <input type="time" id="hora" name="hora"><br>
+
+      <label for="peso">Peso (kg):</label>
+      <input type="number" step="0.01" id="peso" name="peso"><br>
+
+      <label for="falla">Falla:</label>
+      <textarea id="falla" name="falla"></textarea><br>
+
+      <input type="submit" value="Enviar">
+    </form>
+  </div>
+
+  <hr>
+
+  <div id="tabla"></div>
+
+  <script>
+    $(document).ready(function() {
+      // Obtener datos del formulario y enviarlos a App Script al enviar el formulario
+      $("#miFormulario").submit(function(event) {
+        event.preventDefault();
+
+        var formData = $(this).serialize();
+        var scriptURL = "https://script.google.com/macros/s/AKfycbySLywxro1qgEjMVqdw3b6Cu5ydAZc5eQ4FMNXXe0wpQywOghtgzire7g3zdNVk90KA-A/exec";
+
+        $.ajax({
+          url: scriptURL,
+          type: "POST",
+          data: formData,
+          success: function(response) {
+            // Actualizar la tabla con los nuevos datos
+            actualizarTabla();
+            // Reiniciar el formulario
+            $("#miFormulario")[0].reset();
+            alert("Datos enviados correctamente")
+          },
+          error: function(error) {
+            console.log("Error al enviar el formulario:", error);
+          }
+        });
+      });
+
+      // Función para actualizar la tabla con los datos más recientes
+      function actualizarTabla() {
+  $.getJSON("https://script.googleusercontent.com/macros/echo?user_content_key=RilbvWYxSIbcLPjqMHirKpyv_68Hmc2IzOPYIrl1goP1cvYoock8lNacEJ0rkV4mek1DpmHxgkH6YuFdpEPsEqYOTbI0jDLym5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnLlsU_a_gVoIu9csAnN7MM8-dIg36VfU7rB8F5lQ0B7_NKPTjZ_RdEeqDvnhjRM_o77qrkGN80ygGamnwk67QsCv8YklRqfRdtz9Jw9Md8uu&lib=MXwIzk-sktVR3RhOUMCPNyzAiWzWr-kvc", function(data) {
+    // Obtener los últimos 5 registros
+    var ultimosRegistros = data.slice(-5);
+
+    var table = "<table><thead><tr>";
+
+    $.each(ultimosRegistros[0], function(key, value) {
+      table += "<th>" + key + "</th>";
+    });
+
+    table += "</tr></thead><tbody>";
+
+    $.each(ultimosRegistros, function(index, row) {
+      table += "<tr>";
+
+      $.each(row, function(key, value) {
+        if (key === 'fecha') {
+          var fecha = new Date(value);
+          var formattedDate = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
+          table += "<td>" + formattedDate + "</td>";
+        } else if (key === 'hora') {
+          var hora = new Date(value);
+          var hours = hora.getHours();
+          var minutes = hora.getMinutes();
+          var ampm = hours >= 12 ? 'pm' : 'am';
+          hours = hours % 12;
+          hours = hours ? hours : 12;
+          minutes = minutes < 10 ? '0' + minutes : minutes;
+          var formattedTime = hours + ':' + minutes + ' ' + ampm;
+          table += "<td>" + formattedTime + "</td>";
+        } else {
+          table += "<td>" + value + "</td>";
+        }
+      });
+
+      table += "</tr>";
+    });
+
+    table += "</tbody></table>";
+
+    $("#tabla").html(table);
+  });
+}
+
+// Cargar la tabla con los últimos 5 registros iniciales
+actualizarTabla();
+
+    });
+  </script>
+
+</body>
+</html>
