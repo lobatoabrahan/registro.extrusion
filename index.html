@@ -7,66 +7,72 @@
   </head>
   <body>
     <div class="bg-blue-500 flex justify-center items-center w-full" id="formulario">
-      <form
-        class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3 max-lg:w-full max-lg:m-8"
-        id="miFormulario"
-      >
+      <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" id="miFormulario">
         <div class="mb-4">
           <label class="block mb-2 text-sm font-medium text-gray-900" for="fecha">Fecha</label>
           <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="date" id="fecha" name="fecha" />
         </div>
-
-        <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-900" for="turno">Turno</label>
-        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" list="turnos" id="turno" name="turno" />
-        <datalist id="turnos">
-          <option value="Diurno"></option>
-          <option value="Nocturno"></option>
-        </datalist>
-      </div>
-      <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-900"  for="operador">Operador</label>
-        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" list="operadores" id="operador" name="operador" />
-        <datalist id="operadores">
-          <option value="Jean Carlos Diaz"></option>
-          <option value="Rafael Pinto"></option>
-          <option value="Sergio Calvete"></option>
-          <option value="Peter Quintero"></option></datalist>
+    
+        <div class="lg:flex lg:justify-between lg:items-center">
+          <div class="mb-4 lg:w-1/3">
+            <label class="block mb-2 text-sm font-medium text-gray-900" for="turno">Turno</label>
+            <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" list="turnos" id="turno" name="turno" />
+            <datalist id="turnos">
+              <option value="Diurno"></option>
+              <option value="Nocturno"></option>
+            </datalist>
+          </div>
+          <div class="mb-4 lg:w-1/3">
+            <label class="block mb-2 text-sm font-medium text-gray-900" for="operador">Operador</label>
+            <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" list="operadores" id="operador" name="operador" />
+            <datalist id="operadores">
+              <option value="Jean Carlos Diaz"></option>
+              <option value="Rafael Pinto"></option>
+              <option value="Sergio Calvete"></option>
+              <option value="Peter Quintero"></option>
+            </datalist>
+          </div>
+          <div class="mb-4 lg:w-1/3">
+            <label class="block mb-2 text-sm font-medium text-gray-900" for="producto">Producto</label>
+            <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="text" id="producto" name="producto" />
+          </div>
         </div>
-
+    
+        <div class="lg:flex lg:justify-between lg:items-center">
+          <div class="mb-4 lg:w-1/2">
+            <label class="block mb-2 text-sm font-medium text-gray-900" for="maquina">Máquina</label>
+            <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" list="maquinas" id="maquina" name="maquina" />
+            <datalist id="maquinas">
+              <option value="1"></option>
+              <option value="2"></option>
+              <option value="3"></option>
+            </datalist>
+          </div>
+          <div class="mb-4 lg:w-1/2">
+            <label class="block mb-2 text-sm font-medium text-gray-900" for="bobina">Bobina</label>
+            <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="text" id="bobina" name="bobina" />
+          </div>
+        </div>
+    
+        <div class="lg:flex lg:justify-between lg:items-center">
+          <div class="mb-4 lg:w-1/2">
+            <label class="block mb-2 text-sm font-medium text-gray-900" for="hora">Hora</label>
+            <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="time" id="hora" name="hora" />
+          </div>
+          <div class="mb-4 lg:w-1/2">
+            <label class="block mb-2 text-sm font-medium text-gray-900" for="peso">Peso (kg)</label>
+            <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="number" step="0.01" id="peso" name="peso" />
+          </div>
+        </div>
+    
         <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-900"  for="producto">Producto</label>
-        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="text" id="producto" name="producto" />
-      </div>
-
-      <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-900"  for="maquina">Máquina</label>
-        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" list="maquinas" id="maquina" name="maquina" />
-        <datalist id="maquinas">
-          <option value="1"></option>
-          <option value="2"></option>
-          <option value="3"></option></datalist>
-</div>
-<div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-900"  for="bobina">Bobina</label>
-        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="text" id="bobina" name="bobina" />
-
-      </div>
-      <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-900"  for="hora">Hora</label>
-        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="time" id="hora" name="hora" />
-      </div>
-      <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-900"  for="peso">Peso (kg)</label>
-        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="number" step="0.01" id="peso" name="peso" />
-      </div>
-      <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-900"  for="falla">Falla</label>
-        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="text" id="falla" name="falla"></input>
-      </div>
+          <label class="block mb-2 text-sm font-medium text-gray-900" for="falla">Falla</label>
+          <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="text" id="falla" name="falla"></input>
+        </div>
         <input type="submit" value="Enviar" />
       </form>
     </div>
+    
 
     <hr />
 
