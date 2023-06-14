@@ -1,140 +1,151 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Tabla de datos y formulario</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-  <div id="formulario">
-    <h2>Registro de datos</h2>
-    <form id="miFormulario">
-      <label for="fecha">Fecha:</label>
-      <input type="date" id="fecha" name="fecha"><br>
+  <head>
+    <title>Tabla de datos y formulario</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div class="bg-blue-500 flex justify-center items-center w-full" id="formulario">
+      <form
+        class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3 max-md:w-full max-md:m-8"
+        id="miFormulario"
+      >
+        <div class="mb-4">
+          <label class="block mb-2 text-sm font-medium text-gray-900" for="fecha">Fecha</label>
+          <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="date" id="fecha" name="fecha" />
+        </div>
 
-      <label for="turno">Turno:</label>
-      <input list="turnos" id="turno" name="turno">
-      <datalist id="turnos">
-        <option value="Diurno">
-        <option value="Nocturno">
-      </datalist><br>
+        <label class="block mb-2 text-sm font-medium text-gray-900" for="turno"></label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" list="turnos" id="turno" name="turno" />
+        <datalist id="turnos">
+          <option value="Diurno"></option>
+          <option value="Nocturno"></option></datalist>
 
-      <label for="operador">Operador:</label>
-      <input list="operadores" id="operador" name="operador">
-      <datalist id="operadores">
-        <option value="Jean Carlos Diaz">
-        <option value="Rafael Pinto">
-        <option value="Sergio Calvete">
-        <option value="Peter Quintero">
-      </datalist><br>
+        <label class="block mb-2 text-sm font-medium text-gray-900"  for="operador">Operador</label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" list="operadores" id="operador" name="operador" />
+        <datalist id="operadores">
+          <option value="Jean Carlos Diaz"></option>
+          <option value="Rafael Pinto"></option>
+          <option value="Sergio Calvete"></option>
+          <option value="Peter Quintero"></option></datalist>
 
-      <label for="producto">Producto:</label>
-      <input type="text" id="producto" name="producto"><br>
 
-      <label for="maquina">Máquina:</label>
-      <input list="maquinas" id="maquina" name="maquina">
-      <datalist id="maquinas">
-        <option value="1">
-        <option value="2">
-        <option value="3">
-      </datalist><br>
+        <label class="block mb-2 text-sm font-medium text-gray-900"  for="producto">Producto</label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="text" id="producto" name="producto" />
 
-      <label for="bobina">Bobina:</label>
-      <input type="text" id="bobina" name="bobina"><br>
+        <label class="block mb-2 text-sm font-medium text-gray-900"  for="maquina">Máquina</label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" list="maquinas" id="maquina" name="maquina" />
+        <datalist id="maquinas">
+          <option value="1"></option>
+          <option value="2"></option>
+          <option value="3"></option></datalist
 
-      <label for="hora">Hora:</label>
-      <input type="time" id="hora" name="hora"><br>
 
-      <label for="peso">Peso (kg):</label>
-      <input type="number" step="0.01" id="peso" name="peso"><br>
+        <label class="block mb-2 text-sm font-medium text-gray-900"  for="bobina">Bobina</label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="text" id="bobina" name="bobina" />
 
-      <label for="falla">Falla:</label>
-      <textarea id="falla" name="falla"></textarea><br>
+        <label class="block mb-2 text-sm font-medium text-gray-900"  for="hora">Hora</label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="time" id="hora" name="hora" />
 
-      <input type="submit" value="Enviar">
-    </form>
-  </div>
+        <label class="block mb-2 text-sm font-medium text-gray-900"  for="peso">Peso (kg)</label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="number" step="0.01" id="peso" name="peso" />
 
-  <hr>
+        <label class="block mb-2 text-sm font-medium text-gray-900"  for="falla">Falla</label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" type="text" id="falla" name="falla"></input>
 
-  <div id="tabla"></div>
+        <input type="submit" value="Enviar" />
+      </form>
+    </div>
 
-  <script>
-    $(document).ready(function() {
-      // Obtener datos del formulario y enviarlos a App Script al enviar el formulario
-      $("#miFormulario").submit(function(event) {
-        event.preventDefault();
+    <hr />
 
-        var formData = $(this).serialize();
-        var scriptURL = "https://script.google.com/macros/s/AKfycbySLywxro1qgEjMVqdw3b6Cu5ydAZc5eQ4FMNXXe0wpQywOghtgzire7g3zdNVk90KA-A/exec";
+    <div id="tabla"></div>
 
-        $.ajax({
-          url: scriptURL,
-          type: "POST",
-          data: formData,
-          success: function(response) {
-            // Actualizar la tabla con los nuevos datos
-            actualizarTabla();
-            // Reiniciar el formulario
-            $("#miFormulario")[0].reset();
-            alert("Datos enviados correctamente")
-          },
-          error: function(error) {
-            console.log("Error al enviar el formulario:", error);
-          }
+    <script>
+      $(document).ready(function () {
+        // Obtener datos del formulario y enviarlos a App Script al enviar el formulario
+        $("#miFormulario").submit(function (event) {
+          event.preventDefault();
+
+          var formData = $(this).serialize();
+          var scriptURL =
+            "https://script.google.com/macros/s/AKfycbySLywxro1qgEjMVqdw3b6Cu5ydAZc5eQ4FMNXXe0wpQywOghtgzire7g3zdNVk90KA-A/exec";
+
+          $.ajax({
+            url: scriptURL,
+            type: "POST",
+            data: formData,
+            success: function (response) {
+              // Actualizar la tabla con los nuevos datos
+              actualizarTabla();
+              // Reiniciar el formulario
+              $("#miFormulario")[0].reset();
+              alert("Datos enviados correctamente");
+            },
+            error: function (error) {
+              console.log("Error al enviar el formulario:", error);
+            },
+          });
         });
-      });
 
-      // Función para actualizar la tabla con los datos más recientes
-      function actualizarTabla() {
-  $.getJSON("https://script.googleusercontent.com/macros/echo?user_content_key=RilbvWYxSIbcLPjqMHirKpyv_68Hmc2IzOPYIrl1goP1cvYoock8lNacEJ0rkV4mek1DpmHxgkH6YuFdpEPsEqYOTbI0jDLym5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnLlsU_a_gVoIu9csAnN7MM8-dIg36VfU7rB8F5lQ0B7_NKPTjZ_RdEeqDvnhjRM_o77qrkGN80ygGamnwk67QsCv8YklRqfRdtz9Jw9Md8uu&lib=MXwIzk-sktVR3RhOUMCPNyzAiWzWr-kvc", function(data) {
-    // Obtener los últimos 5 registros
-    var ultimosRegistros = data.slice(-5);
+        // Función para actualizar la tabla con los datos más recientes
+        function actualizarTabla() {
+          $.getJSON(
+            "https://script.googleusercontent.com/macros/echo?user_content_key=RilbvWYxSIbcLPjqMHirKpyv_68Hmc2IzOPYIrl1goP1cvYoock8lNacEJ0rkV4mek1DpmHxgkH6YuFdpEPsEqYOTbI0jDLym5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnLlsU_a_gVoIu9csAnN7MM8-dIg36VfU7rB8F5lQ0B7_NKPTjZ_RdEeqDvnhjRM_o77qrkGN80ygGamnwk67QsCv8YklRqfRdtz9Jw9Md8uu&lib=MXwIzk-sktVR3RhOUMCPNyzAiWzWr-kvc",
+            function (data) {
+              // Obtener los últimos 5 registros
+              var ultimosRegistros = data.slice(-5);
 
-    var table = "<table><thead><tr>";
+              var table = "<table><thead><tr>";
 
-    $.each(ultimosRegistros[0], function(key, value) {
-      table += "<th>" + key + "</th>";
-    });
+              $.each(ultimosRegistros[0], function (key, value) {
+                table += "<th>" + key + "</th>";
+              });
 
-    table += "</tr></thead><tbody>";
+              table += "</tr></thead><tbody>";
 
-    $.each(ultimosRegistros, function(index, row) {
-      table += "<tr>";
+              $.each(ultimosRegistros, function (index, row) {
+                table += "<tr>";
 
-      $.each(row, function(key, value) {
-        if (key === 'fecha') {
-          var fecha = new Date(value);
-          var formattedDate = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
-          table += "<td>" + formattedDate + "</td>";
-        } else if (key === 'hora') {
-          var hora = new Date(value);
-          var hours = hora.getHours();
-          var minutes = hora.getMinutes();
-          var ampm = hours >= 12 ? 'pm' : 'am';
-          hours = hours % 12;
-          hours = hours ? hours : 12;
-          minutes = minutes < 10 ? '0' + minutes : minutes;
-          var formattedTime = hours + ':' + minutes + ' ' + ampm;
-          table += "<td>" + formattedTime + "</td>";
-        } else {
-          table += "<td>" + value + "</td>";
+                $.each(row, function (key, value) {
+                  if (key === "fecha") {
+                    var fecha = new Date(value);
+                    var formattedDate =
+                      fecha.getDate() +
+                      "/" +
+                      (fecha.getMonth() + 1) +
+                      "/" +
+                      fecha.getFullYear();
+                    table += "<td>" + formattedDate + "</td>";
+                  } else if (key === "hora") {
+                    var hora = new Date(value);
+                    var hours = hora.getHours();
+                    var minutes = hora.getMinutes();
+                    var ampm = hours >= 12 ? "pm" : "am";
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                    var formattedTime = hours + ":" + minutes + " " + ampm;
+                    table += "<td>" + formattedTime + "</td>";
+                  } else {
+                    table += "<td>" + value + "</td>";
+                  }
+                });
+
+                table += "</tr>";
+              });
+
+              table += "</tbody></table>";
+
+              $("#tabla").html(table);
+            }
+          );
         }
+
+        // Cargar la tabla con los últimos 5 registros iniciales
+        actualizarTabla();
       });
-
-      table += "</tr>";
-    });
-
-    table += "</tbody></table>";
-
-    $("#tabla").html(table);
-  });
-}
-
-// Cargar la tabla con los últimos 5 registros iniciales
-actualizarTabla();
-
-    });
-  </script>
-
-</body>
+    </script>
+  </body>
 </html>
