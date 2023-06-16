@@ -1,132 +1,79 @@
 document.addEventListener('DOMContentLoaded', function() {
-  var apiUrl = 'https://script.google.com/macros/s/AKfycby8BykpD-xBJ8kI_BxqxU-ZCtKa7ovb9GA4b6DKiBm86gYVE_mlLpbN-Gv8vmqj_BWsfQ/exec';
-  var tableContainer = document.getElementById('table-container');
+  fetch('https://script.google.com/macros/s/AKfycby8BykpD-xBJ8kI_BxqxU-ZCtKa7ovb9GA4b6DKiBm86gYVE_mlLpbN-Gv8vmqj_BWsfQ/exec?action=getExtrusionData')
+    .then(response => response.json())
+    .then(data => {
+      renderTable(data);
+    });
 
-  // Cargar y mostrar los datos de la tabla
-  function loadTable() {
-    fetch(apiUrl + '?action=getExtrusionData')
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(data) {
-        var table = createTable(data);
-        tableContainer.appendChild(table);
-      })
-      .catch(function(error) {
-        console.log('Error:', error);
-      });
-  }
+  function renderTable(data) {
+    const table = document.getElementById('extrusionTable');
+    const thead = table.querySelector('thead');
+    const tbody = table.querySelector('tbody');
 
-  // Crear la tabla a partir de los datos recibidos
-  function createTable(data) {
-    var table = document.createElement('table');
-
-    // Crea la fila de encabezado
-    var thead = document.createElement('thead');
-    var headerRow = document.createElement('tr');
-    for (var key in data[0]) {
-      var th = document.createElement('th');
-      th.textContent = key;
+    // Generar encabezados de la tabla
+    const headers = Object.keys(data[0]);
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+      const th = document.createElement('th');
+      th.textContent = header;
       headerRow.appendChild(th);
-    }
+    });
     thead.appendChild(headerRow);
-    table.appendChild(thead);
 
-    // Crea las filas de datos
-    var tbody = document.createElement('tbody');
-    data.forEach(function(rowData) {
-      var row = document.createElement('tr');
-
-      for (var key in rowData) {
-        var cell = document.createElement('td');
-        cell.textContent = rowData[key];
+    // Generar filas de la tabla
+    data.forEach(rowData => {
+      const row = document.createElement('tr');
+      headers.forEach(header => {
+        const cell = document.createElement('td');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = rowData[header];
+        input.addEventListener('input', function() {
+          rowData[header] = this.value;
+        });
+        cell.appendChild(input);
         row.appendChild(cell);
-      }
-
-      var editCell = document.createElement('td');
-      var editButton = document.createElement('button');
-      editButton.textContent = 'Editar';
-      editButton.classList.add('edit-button');
-      editButton.addEventListener('click', function() {
-        enableEditMode(row);
       });
-      editCell.appendChild(editButton);
-      row.appendChild(editCell);
-
       tbody.appendChild(row);
     });
-
-    table.appendChild(tbody);
-    return table;
   }
 
-  // Habilitar el modo de edición para una fila
-  function enableEditMode(row) {
-    row.querySelectorAll('td:not(:last-child)').forEach(function(cell) {
-      var value = cell.textContent;
-      cell.innerHTML = '<input type="text" value="' + value + '">';
+  function updateData() {
+    const table = document.getElementById('extrusionTable');
+    const rows = table.querySelectorAll('tbody tr');
+
+    const updatedData = Array.from(rows).map(row => {
+      const inputs = row.querySelectorAll('input');
+      const rowData = {};
+
+      inputs.forEach(input => {
+        const header = input.parentNode.parentNode.querySelector('thead th').textContent;
+        rowData[header] = input.value;
+      });
+
+      return rowData;
     });
 
-    var editButton = row.querySelector('.edit-button');
-    editButton.disabled = true;
+    const postData = JSON.stringify(updatedData);
 
-    var saveButton = document.createElement('button');
-    saveButton.textContent = 'Guardar';
-    saveButton.classList.add('save-button');
-    saveButton.addEventListener('click', function() {
-      saveChanges(row);
-    });
-
-    var saveCell = document.createElement('td');
-    saveCell.appendChild(saveButton);
-    row.appendChild(saveCell);
-  }
-
-  // Guardar los cambios realizados en una fila
-  function saveChanges(row) {
-    var inputs = row.querySelectorAll('input');
-    var rowData = {};
-
-    inputs.forEach(function(input, index) {
-      var key = row.parentElement.querySelector('th:nth-child(' + (index + 1) + ')').textContent;
-      var value = input.value;
-      rowData[key] = value;
-    });
-
-    fetch(apiUrl + '?action=updateExtrusionData', {
+    fetch('https://script.google.com/macros/s/AKfycby8BykpD-xBJ8kI_BxqxU-ZCtKa7ovb9GA4b6DKiBm86gYVE_mlLpbN-Gv8vmqj_BWsfQ/exec', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify([rowData])
+      body: postData
     })
-      .then(function(response) {
-        return response.text();
-      })
-      .then(function(data) {
-        console.log('Data updated successfully:', data);
-        disableEditMode(row);
-      })
-      .catch(function(error) {
-        console.log('Error:', error);
-      });
-  }
-
-  // Deshabilitar el modo de edición para una fila
-  function disableEditMode(row) {
-    row.querySelectorAll('td:not(:last-child)').forEach(function(cell) {
-      var input = cell.querySelector('input');
-      var value = input.value;
-      cell.textContent = value;
+    .then(response => {
+      console.log('Data updated successfully');
+    })
+    .catch(error => {
+      console.error('Error updating data:', error);
     });
-
-    var saveCell = row.querySelector('td:last-child');
-    row.removeChild(saveCell);
-
-    var editButton = row.querySelector('.edit-button');
-    editButton.disabled = false;
   }
 
-  // Cargar la tabla al cargar la página
-  loadTable();
+  // Agregar evento al botón de guardar
+  const saveButton = document.createElement('button');
+  saveButton.textContent = 'Guardar';
+  saveButton.addEventListener('click', updateData);
+  document.body.appendChild(saveButton);
 });
