@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var rowData = {};
 
     inputs.forEach(function(input, index) {
-      var key = row.querySelector('th:nth-child(' + (index + 1) + ')').textContent;
+      var key = row.parentElement.querySelector('th:nth-child(' + (index + 1) + ')').textContent;
       var value = input.value;
       rowData[key] = value;
     });
