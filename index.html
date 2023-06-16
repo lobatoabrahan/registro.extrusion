@@ -76,18 +76,15 @@
 
     <div id="tabla"></div>
 
-   <h1>Tabla Editable</h1>
+   <h1>Tabla de datos</h1>
   <table id="data-table">
     <thead>
       <tr>
-        <!-- Los títulos de columna se generarán dinámicamente desde la API -->
+        <th></th> <!-- Columna vacía para los botones de edición -->
       </tr>
     </thead>
-    <tbody>
-      <!-- Los datos de fila se generarán dinámicamente desde la API -->
-    </tbody>
+    <tbody></tbody>
   </table>
-  <button id="save-btn">Guardar Cambios</button>
 
     <script>
       $(document).ready(function () {
@@ -173,100 +170,71 @@
         // Cargar la tabla con los últimos 5 registros iniciales
         actualizarTabla();
       });
-// URL de la API
-    var apiUrl = 'https://script.google.com/macros/s/AKfycby8BykpD-xBJ8kI_BxqxU-ZCtKa7ovb9GA4b6DKiBm86gYVE_mlLpbN-Gv8vmqj_BWsfQ/exec';
+$(document).ready(function() {
+      // Obtener los datos de la API y mostrarlos en la tabla
+      $.getJSON('https://script.google.com/macros/s/AKfycby8BykpD-xBJ8kI_BxqxU-ZCtKa7ovb9GA4b6DKiBm86gYVE_mlLpbN-Gv8vmqj_BWsfQ/exec', function(data) {
+        var table = $('#data-table');
 
-    // Variable para almacenar los datos originales
-    var originalData;
+        // Agregar los encabezados de la tabla
+        var headerRow = $('<tr></tr>');
+        for (var header in data[0]) {
+          headerRow.append('<th>' + header + '</th>');
+        }
+        table.find('thead tr').append(headerRow);
 
-    // Obtener los datos de la API y cargarlos en la tabla
-    $.getJSON(apiUrl, function(data) {
-      var table = $('#data-table');
-
-      // Generar los títulos de columna
-      var headers = Object.keys(data[0]);
-      var headerRow = $('<tr>');
-      headers.forEach(function(header) {
-        headerRow.append($('<th>').text(header));
+        // Agregar las filas de datos
+        $.each(data, function(index, row) {
+          var dataRow = $('<tr></tr>');
+          for (var key in row) {
+            dataRow.append('<td>' + row[key] + '</td>');
+          }
+          // Agregar botón de edición a cada fila
+          var editButton = $('<button>Edit</button>').click(function() {
+            enableEditRow(dataRow);
+          });
+          dataRow.prepend('<td></td>').find('td:first').append(editButton);
+          table.find('tbody').append(dataRow);
+        });
       });
-      table.find('thead').append(headerRow);
 
-      // Generar los datos de fila
-      data.forEach(function(rowData) {
-        var row = $('<tr>');
-        headers.forEach(function(header) {
-          var cell = $('<td>').text(rowData[header]);
-          row.append(cell);
+      // Habilitar la edición de una fila
+      function enableEditRow(row) {
+        row.find('td').each(function() {
+          var value = $(this).text();
+          $(this).html('<input type="text" value="' + value + '">');
         });
 
-        // Agregar botón de edición a cada fila
-        var editButton = $('<button>').text('Editar');
-        editButton.click(function() {
-          enableRowEdit(row);
+        var saveButton = $('<button>Save</button>').click(function() {
+          saveRow(row);
         });
-        var editCell = $('<td>').append(editButton);
-        row.append(editCell);
+        row.append('<td></td>').find('td:last').append(saveButton);
+      }
 
-        table.find('tbody').append(row);
-      });
+      // Guardar los cambios de una fila y actualizar la API
+      function saveRow(row) {
+        var rowData = {};
+        row.find('td').each(function(index, cell) {
+          if (index === 0) return; // Saltar la primera columna (botón de edición)
+          var key = row.closest('table').find('thead th').eq(index - 1).text();
+          var value = $(cell).find('input').val();
+          rowData[key] = value;
+          $(cell).text(value);
+        });
 
-      // Guardar los datos originales
-      originalData = JSON.parse(JSON.stringify(data));
-    });
-
-    // Habilitar la edición de una fila
-    function enableRowEdit(row) {
-      row.find('td:not(:last-child)').each(function() {
-        var cell = $(this);
-        var originalValue = cell.text();
-        cell.empty();
-
-        var input = $('<input>').attr('type', 'text').val(originalValue);
-        cell.append(input);
-      });
-
-      var editButton = row.find('button');
-      editButton.text('Guardar');
-      editButton.click(function() {
-        saveRowEdit(row);
-      });
-    }
-
-    // Guardar los cambios de una fila editada
-    function saveRowEdit(row) {
-      var rowData = {};
-
-      row.find('td:not(:last-child)').each(function(index) {
-        var cell = $(this);
-        var header = $('#data-table thead th').eq(index).text();
-        var inputValue = cell.find('input').val();
-        cell.empty().text(inputValue);
-        rowData[header] = inputValue;
-      });
-
-      var rowIndex = row.index();
-      originalData[rowIndex] = rowData;
-
-      $.post(apiUrl, JSON.stringify([rowData]), function(response) {
-        alert('Cambios guardados exitosamente');
-      }).fail(function() {
-        alert('Error al guardar los cambios');
-      });
-
-      var editButton = row.find('button');
-      editButton.text('Editar');
-      editButton.click(function() {
-        enableRowEdit(row);
-      });
-    }
-
-    // Guardar los cambios en la tabla
-    $('#save-btn').click(function() {
-      $.post(apiUrl, JSON.stringify(originalData), function(response) {
-        alert('Cambios guardados exitosamente');
-      }).fail(function() {
-        alert('Error al guardar los cambios');
-      });
+        // Enviar los datos actualizados a la API
+        $.ajax({
+          url: 'https://script.google.com/macros/s/AKfycby8BykpD-xBJ8kI_BxqxU-ZCtKa7ovb9GA4b6DKiBm86gYVE_mlLpbN-Gv8vmqj_BWsfQ/exec',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify([rowData]),
+          success: function(response) {
+            alert('Datos guardados correctamente');
+          },
+          error: function(xhr, status, error) {
+            console.error('Error al guardar los datos:', error);
+          }
+        });
+      }
     });
     </script>
   </body>
