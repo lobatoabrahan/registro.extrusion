@@ -170,71 +170,91 @@
         // Cargar la tabla con los últimos 5 registros iniciales
         actualizarTabla();
       });
-$(document).ready(function() {
-      // Obtener los datos de la API y mostrarlos en la tabla
-      $.getJSON('https://script.google.com/macros/s/AKfycby8BykpD-xBJ8kI_BxqxU-ZCtKa7ovb9GA4b6DKiBm86gYVE_mlLpbN-Gv8vmqj_BWsfQ/exec', function(data) {
-        var table = $('#data-table');
 
-        // Agregar los encabezados de la tabla
-        var headerRow = $('<tr></tr>');
-        for (var header in data[0]) {
-          headerRow.append('<th>' + header + '</th>');
-        }
-        table.find('thead tr').append(headerRow);
+      
+       var apiUrl = 'https://script.google.com/macros/s/AKfycby8BykpD-xBJ8kI_BxqxU-ZCtKa7ovb9GA4b6DKiBm86gYVE_mlLpbN-Gv8vmqj_BWsfQ/exec';
 
-        // Agregar las filas de datos
-        $.each(data, function(index, row) {
-          var dataRow = $('<tr></tr>');
-          for (var key in row) {
-            dataRow.append('<td>' + row[key] + '</td>');
-          }
-          // Agregar botón de edición a cada fila
-          var editButton = $('<button>Edit</button>').click(function() {
-            enableEditRow(dataRow);
-          });
-          dataRow.prepend('<td></td>').find('td:first').append(editButton);
-          table.find('tbody').append(dataRow);
-        });
-      });
+    function createEditButton() {
+      var button = document.createElement('button');
+      button.className = 'edit-button';
+      button.textContent = 'Editar';
+      button.addEventListener('click', editRow);
+      return button;
+    }
 
-      // Habilitar la edición de una fila
-      function enableEditRow(row) {
-        row.find('td').each(function() {
-          var value = $(this).text();
-          $(this).html('<input type="text" value="' + value + '">');
-        });
+    function createSaveButton() {
+      var button = document.createElement('button');
+      button.className = 'save-button';
+      button.textContent = 'Guardar';
+      button.addEventListener('click', saveRow);
+      return button;
+    }
 
-        var saveButton = $('<button>Save</button>').click(function() {
-          saveRow(row);
-        });
-        row.append('<td></td>').find('td:last').append(saveButton);
+    function editRow(event) {
+      var row = event.target.parentElement.parentElement;
+      var cells = row.getElementsByTagName('td');
+      for (var i = 0; i < cells.length; i++) {
+        var cell = cells[i];
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.value = cell.textContent;
+        cell.textContent = '';
+        cell.appendChild(input);
       }
+      row.dataset.editable = true;
+    }
 
-      // Guardar los cambios de una fila y actualizar la API
-      function saveRow(row) {
-        var rowData = {};
-        row.find('td').each(function(index, cell) {
-          if (index === 0) return; // Saltar la primera columna (botón de edición)
-          var key = row.closest('table').find('thead th').eq(index - 1).text();
-          var value = $(cell).find('input').val();
-          rowData[key] = value;
-          $(cell).text(value);
-        });
-
-        // Enviar los datos actualizados a la API
-        $.ajax({
-          url: 'https://script.google.com/macros/s/AKfycby8BykpD-xBJ8kI_BxqxU-ZCtKa7ovb9GA4b6DKiBm86gYVE_mlLpbN-Gv8vmqj_BWsfQ/exec',
-          type: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify([rowData]),
-          success: function(response) {
-            alert('Datos guardados correctamente');
-          },
-          error: function(xhr, status, error) {
-            console.error('Error al guardar los datos:', error);
-          }
-        });
+    function saveRow(event) {
+      var row = event.target.parentElement.parentElement;
+      var cells = row.getElementsByTagName('td');
+      var rowData = {};
+      for (var i = 0; i < cells.length; i++) {
+        var cell = cells[i];
+        var input = cell.querySelector('input');
+        var columnName = cell.dataset.column;
+        rowData[columnName] = input.value;
+        cell.textContent = input.value;
       }
+      delete row.dataset.editable;
+
+      // Enviar datos actualizados a la API
+      var requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify([rowData])
+      };
+      fetch(apiUrl, requestOptions)
+        .then(response => response.text())
+        .then(data => console.log(data))
+        .catch(error => console.log(error));
+    }
+
+    function loadData() {
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          var tableBody = document.querySelector('#data-table tbody');
+          for (var i = 0; i < data.length; i++) {
+            var rowData = data[i];
+            var row = document.createElement('tr');
+            for (var key in rowData) {
+              var cell = document.createElement('td');
+              cell.textContent = rowData[key];
+              cell.dataset.column = key;
+              row.appendChild(cell);
+            }
+            var editCell = document.createElement('td');
+            editCell.appendChild(createEditButton());
+            editCell.appendChild(createSaveButton());
+            row.insertBefore(editCell, row.firstChild);
+            tableBody.appendChild(row);
+          }
+        })
+        .catch(error => console.log(error));
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      loadData();
     });
     </script>
   </body>
