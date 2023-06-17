@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   var chartContainer = document.getElementById("chart");
   var chart = null;
+  var donutContainer = document.getElementById("donutChart");
+  var donutChart = null;
 
   fetch(
     "https://script.google.com/macros/s/AKfycbzbgSuF26Rykv2W0_GJC8o-EOETkOLf4PXBOuu9Zv6yu_Pv8gyYv7HmCpLVCsKRcxli/exec"
@@ -127,6 +129,69 @@ document.addEventListener("DOMContentLoaded", function () {
                     },
                   },
                 },
+              },
+            });
+
+            var groupedByDate = filteredData.reduce((result, row) => {
+              var fecha = new Date(row.Fecha);
+              var dia = fecha.getDate();
+              var mes = fecha.getMonth() + 1;
+              var año = fecha.getFullYear();
+              var fechaFormateada = dia + "/" + mes + "/" + año;
+
+              var pesoBobina = parseFloat(row["Peso Kg"]) || 0;
+              var desperdicio = parseFloat(row["Kg residuo"]) || 0;
+              var kgRechazados = parseFloat(row["Kg rechazados"]) || 0;
+              var kgExtruidos = pesoBobina + desperdicio + kgRechazados;
+
+              if (!result[fechaFormateada]) {
+                result[fechaFormateada] = 0;
+              }
+
+              result[fechaFormateada] += kgExtruidos;
+
+              return result;
+            }, {});
+
+            var donutLabels = Object.keys(groupedByDate);
+            var donutData = Object.values(groupedByDate);
+
+            if (donutChart !== null) {
+              donutChart.destroy();
+            }
+
+            donutChart = new Chart(donutContainer, {
+              type: "doughnut",
+              data: {
+                labels: donutLabels,
+                datasets: [
+                  {
+                    label: "Kg Extruidos por Día",
+                    data: donutData,
+                    backgroundColor: [
+                      "rgba(255, 99, 132, 0.5)",
+                      "rgba(54, 162, 235, 0.5)",
+                      "rgba(255, 206, 86, 0.5)",
+                      "rgba(75, 192, 192, 0.5)",
+                      "rgba(153, 102, 255, 0.5)",
+                      "rgba(255, 159, 64, 0.5)",
+                      "rgba(255, 99, 132, 0.5)",
+                    ],
+                    borderColor: [
+                      "rgba(255, 99, 132, 1)",
+                      "rgba(54, 162, 235, 1)",
+                      "rgba(255, 206, 86, 1)",
+                      "rgba(75, 192, 192, 1)",
+                      "rgba(153, 102, 255, 1)",
+                      "rgba(255, 159, 64, 1)",
+                      "rgba(255, 99, 132, 1)",
+                    ],
+                    borderWidth: 1,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
               },
             });
           })
