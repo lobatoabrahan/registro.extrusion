@@ -173,54 +173,73 @@
         // Cargar la tabla con los últimos 5 registros iniciales
         actualizarTabla();
       });
+// URL de la API
+var apiUrl = 'https://script.google.com/macros/s/AKfycby8BykpD-xBJ8kI_BxqxU-ZCtKa7ovb9GA4b6DKiBm86gYVE_mlLpbN-Gv8vmqj_BWsfQ/exec';
 
-      // URL de la API
-    var apiUrl = 'https://script.google.com/macros/s/AKfycby8BykpD-xBJ8kI_BxqxU-ZCtKa7ovb9GA4b6DKiBm86gYVE_mlLpbN-Gv8vmqj_BWsfQ/exec';
+// Obtener los datos de la API y cargarlos en la tabla
+$.getJSON(apiUrl, function(data) {
+  var table = $('#data-table');
 
-    // Obtener los datos de la API y cargarlos en la tabla
-    $.getJSON(apiUrl, function(data) {
-      var table = $('#data-table');
+  // Generar los títulos de columna
+  var headers = Object.keys(data[0]);
+  var headerRow = $('<tr>');
+  headers.forEach(function(header) {
+    headerRow.append($('<th>').text(header));
+  });
+  table.find('thead').append(headerRow);
 
-      // Generar los títulos de columna
-      var headers = Object.keys(data[0]);
-      var headerRow = $('<tr>');
-      headers.forEach(function(header) {
-        headerRow.append($('<th>').text(header));
-      });
-      table.find('thead').append(headerRow);
-
-      // Generar los datos de fila
-      data.forEach(function(rowData) {
-        var row = $('<tr>');
-        headers.forEach(function(header) {
-          var cell = $('<td>');
-          var input = $('<input>').attr('type', 'text').val(rowData[header]);
-          cell.append(input);
-          row.append(cell);
-        });
-        table.find('tbody').append(row);
-      });
+  // Generar los datos de fila
+  data.forEach(function(rowData) {
+    var row = $('<tr>');
+      
+    headers.forEach(function(header) {
+      var cell = $('<td>');
+      var input = $('<input>').attr('type', 'text').val(formatValue(header, rowData[header]));
+      cell.append(input);
+      row.append(cell);
     });
+    table.find('tbody').append(row);
+  });
+});
 
-    // Guardar los cambios en la tabla
-    $('#save-btn').click(function() {
-      var updatedData = [];
-      $('#data-table tbody tr').each(function() {
-        var rowData = {};
-        $(this).find('input').each(function(index, input) {
-          var header = $('#data-table thead th').eq(index).text();
-          rowData[header] = $(input).val();
-        });
-        updatedData.push(rowData);
-      });
+// Función para formatear los valores de fecha y hora
+function formatValue(header, value) {
+  if (header === 'fecha') {
+    var date = new Date(value);
+    var day = ('0' + date.getDate()).slice(-2);
+    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+    var year = date.getFullYear();
+    return day + '/' + month + '/' + year;
+  } else if (header === 'hora') {
+    var time = new Date(value);
+    var hours = ('0' + time.getHours()).slice(-2);
+    var minutes = ('0' + time.getMinutes()).slice(-2);
+    return hours + ':' + minutes;
+  }
+  
+  return value;
+}
 
-      // Enviar los datos actualizados a la API
-      $.post(apiUrl, JSON.stringify(updatedData), function(response) {
-        alert('Cambios guardados exitosamente');
-      }).fail(function() {
-        alert('Error al guardar los cambios');
-      });
+// Guardar los cambios en la tabla
+$('#save-btn').click(function() {
+  var updatedData = [];
+  $('#data-table tbody tr').each(function() {
+    var rowData = {};
+    $(this).find('input').each(function(index, input) {
+      var header = $('#data-table thead th').eq(index).text();
+      rowData[header] = $(input).val();
     });
+    updatedData.push(rowData);
+  });
+
+  // Enviar los datos actualizados a la API
+  $.post(apiUrl, JSON.stringify(updatedData), function(response) {
+    alert('Cambios guardados exitosamente');
+  }).fail(function() {
+    alert('Error al guardar los cambios');
+  });
+});
+
     </script>
   </body>
 </html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gráfico de Bobinas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <h1>Selección de Dimensiones y Código de Producción</h1>
+
+    <label for="dimensionInput">Dimensiones:</label>
+    <input type="text" id="dimensionInput" list="dimensiones" />
+    <datalist id="dimensiones"></datalist>
+
+    <label for="codigoProduccionInput">Código de Producción:</label>
+    <input type="text" id="codigoProduccionInput" list="codigosProduccion" />
+    <datalist id="codigosProduccion"></datalist>
+
+    <h2>Total de kg extruidos: <span id="pesoTotalExtruido"></span></h2>
+    <h2>Cantidad de desperdicio: <span id="cantidadDesperdicio"></span></h2>
+    <h2>Cantidad de kg rechazados: <span id="cantidadKgRechazados"></span></h2>
+
+    <h2>Gráfico de Bobinas</h2>
+    <div id="chartContainer">
+      <canvas id="chart"></canvas>
+    </div>
+  </body>
+</html>
