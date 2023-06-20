@@ -106,8 +106,8 @@ document.addEventListener("DOMContentLoaded", function () {
                   {
                     label: "Bobinas",
                     data: bobinas.map((bobina) => bobina.peso),
-                    backgroundColor: "rgba(54, 162, 235, 0.5)",
-                    borderColor: "rgba(54, 162, 235, 1)",
+                    backgroundColor: "rgb(56, 118, 29, 0,5)",
+                    borderColor: "rgb(56, 118, 29, 1)",
                     borderWidth: 1,
                   },
                   {
@@ -194,6 +194,110 @@ document.addEventListener("DOMContentLoaded", function () {
                 responsive: true,
               },
             });
+            // Filtrar los datos por código de producción seleccionado
+            var filteredDataExtrusion = data.filter(
+              (row) => row.Orden === selectedCodigoProduccion
+            );
+
+            // Mostrar los datos filtrados en una tabla
+            showExtrusionData(filteredDataExtrusion);
+            function showExtrusionData(data) {
+              tablaDatosExtrusion.innerHTML = "";
+            
+              if (data.length === 0) {
+                tablaDatosExtrusion.textContent = "No se encontraron datos de extrusión para la orden de producción seleccionada.";
+                return;
+              }
+            
+              // Agrupar los datos por Fecha, Turno y Operador y sumar los valores correspondientes
+              var groupedData = groupAndSumData(data);
+            
+              var table = document.createElement("table");
+              table.classList.add("table", "w-full", "text-center", "text-gray-500");
+            
+              var thead = document.createElement("thead");
+              thead.classList.add("text-xs", "text-gray-700", "uppercase", "bg-gray-50");
+            
+              var tbody = document.createElement("tbody");
+            
+              var headers = ["Fecha", "Turno", "Operador", "Peso Kg", "Kg residuo", "Kg rechazados"];
+              var headerRow = document.createElement("tr");
+            
+              headers.forEach(headerText => {
+                var th = document.createElement("th");
+                th.setAttribute("scope", "col")
+                th.classList.add("px-6", "py-3");
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+              });
+            
+              thead.appendChild(headerRow);
+              table.appendChild(thead);
+            
+              groupedData.forEach((group, index) => {
+                var rowElement = document.createElement("tr");
+            
+                var fecha = new Date(group.Fecha).toLocaleDateString("es-ES");
+                var turno = group.Turno;
+                var operador = group.Operador;
+                var pesoKg = group.totalPesoKg.toFixed(2); // Limitar a 2 decimales
+                var kgResiduo = group.totalKgResiduo.toFixed(2); // Limitar a 2 decimales
+                var kgRechazados = group.totalKgRechazados.toFixed(2); // Limitar a 2 decimales
+            
+                var rowData = [fecha, turno, operador, pesoKg, kgResiduo, kgRechazados];
+            
+                rowData.forEach(cellData => {
+                  var cell = document.createElement("td");
+                  cell.classList.add("px-6", "py-4");
+                  cell.textContent = cellData;
+                  rowElement.appendChild(cell);
+                });
+            
+                // Aplicar colores alternos a las filas
+                if (index % 2 === 0) {
+                  rowElement.classList.add("bg-white");
+                } else {
+                  rowElement.classList.add("bg-gray-50");
+                }
+            
+                tbody.appendChild(rowElement);
+              });
+            
+              table.appendChild(tbody);
+              tablaDatosExtrusion.appendChild(table);
+            }
+            
+
+            function groupAndSumData(data) {
+              var groupedData = [];
+
+              data.forEach((row) => {
+                var existingGroup = groupedData.find(
+                  (group) =>
+                    group.Fecha === row.Fecha &&
+                    group.Turno === row.Turno &&
+                    group.Operador === row.Operador
+                );
+
+                if (existingGroup) {
+                  existingGroup.totalPesoKg += row["Peso Kg"];
+                  existingGroup.totalKgResiduo += row["Kg residuo"];
+                  existingGroup.totalKgRechazados += row["Kg rechazados"];
+                } else {
+                  var newGroup = {
+                    Fecha: row.Fecha,
+                    Turno: row.Turno,
+                    Operador: row.Operador,
+                    totalPesoKg: row["Peso Kg"],
+                    totalKgResiduo: row["Kg residuo"],
+                    totalKgRechazados: row["Kg rechazados"],
+                  };
+                  groupedData.push(newGroup);
+                }
+              });
+
+              return groupedData;
+            }
           })
           .catch((error) => {
             console.error("Error al obtener los datos de la API:", error);
